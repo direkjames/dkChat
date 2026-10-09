@@ -45,13 +45,39 @@ showcase-empty-hand: "{prefix}<red>Hold an item in your hand to use <white>{tag}
 showcase-expired: "{prefix}<red>This preview has expired."
 showcase-failed: "{prefix}<red>Couldn't show that right now. Please try again."
 
+# /ad
+ad-usage: "{prefix}<gray>Usage: <white>/ad <message>"
+ad-status-ready: "{prefix}<green>You can advertise now."
+ad-status-cooldown: "{prefix}<gray>You can advertise again in <white>{time}</white>."
+ad-disabled: "{prefix}<red>Advertisements are turned off right now."
+ad-too-short: "{prefix}<red>Your ad must be at least <white>{min}</white> characters."
+ad-too-long: "{prefix}<red>Your ad can't be longer than <white>{max}</white> characters."
+ad-cooldown: "{prefix}<red>You can advertise again in <white>{time}</white>."
+ad-no-money: "{prefix}<red>You need <white>{cost}</white> to post an ad."
+ad-paid: "{prefix}<gray>Your ad was posted. <white>{cost}</white> was taken from your balance."
+ad-muted: "{prefix}<red>You are muted and can't post ads."
+ad-unavailable: "{prefix}<red>Ads can't be posted right now. Please tell a staff member."
+
+# /clearchat
+clearchat-self: "{prefix}<gray>Your chat was cleared."
+clearchat-all: "{prefix}<gray>The chat was cleared by <white>{player}</white>."
+
+# /dchat announce
+announce-usage: "{prefix}<gray>Usage: <white>/dchat announce <id></white>. Loaded: <white>{list}"
+announce-sent: "{prefix}<green>Sent announcement <white>{id}</white>."
+announce-unknown: "{prefix}<red>No announcement called <white>{id}</white>. Loaded: <white>{list}"
+
 help:
   - "<gradient:#5B8CFF:#9F6BFF><bold>dkChat</bold></gradient> <gray>v{version} by direk james"
   - "<white>/dchat format</white> <dark_gray>-</dark_gray> <gray>See which chat format you are using"
   - "<white>/msg <player> <message></white> <dark_gray>-</dark_gray> <gray>Send a private message"
   - "<white>/r <message></white> <dark_gray>-</dark_gray> <gray>Reply to your last private message"
   - "<white>/ignore <player></white> <dark_gray>-</dark_gray> <gray>Ignore or unignore a player"
+  - "<white>/ad <message></white> <dark_gray>-</dark_gray> <gray>Advertise to the whole server"
+  - "<white>/clearchat</white> <dark_gray>-</dark_gray> <gray>Clear your own chat"
   - "<gray>Type <white>[i]</white>, <white>[inv]</white> or <white>[ec]</white> in chat to show your item, inventory or ender chest"
 
 help-admin:
   - "<white>/dchat reload</white> <dark_gray>-</dark_gray> <gray>Reload all config files"
+  - "<white>/dchat announce <id></white> <dark_gray>-</dark_gray> <gray>Send an announcement now"
+  - "<white>/clearchat all</white> <dark_gray>-</dark_gray> <gray>Clear chat for everyone except staff"

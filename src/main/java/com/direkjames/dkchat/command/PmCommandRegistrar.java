@@ -77,6 +77,19 @@ public final class PmCommandRegistrar implements Listener {
         }
     }
 
+    /** Removes dkChat's /msg and /r so nothing points at a disabled plugin (e.g. plugin reloaders). */
+    public void release() {
+        CommandMap map = Bukkit.getCommandMap();
+        Map<String, Command> known = map.getKnownCommands();
+        for (Command command : commands) {
+            for (String label : labelsOf.get(command)) {
+                known.remove(label, command);
+                known.remove(NAMESPACE + ":" + label, command);
+            }
+            command.unregister(map);
+        }
+    }
+
     @EventHandler
     public void onServerLoad(ServerLoadEvent event) {
         // One tick later, so plugins that adjust commands at load (EssentialsX) have finished.

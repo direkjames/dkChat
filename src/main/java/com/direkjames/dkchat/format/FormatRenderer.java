@@ -49,7 +49,7 @@ public final class FormatRenderer {
 
     /** The player's display name (EssentialsX nickname if set) with the configured tooltip. */
     public Component nameWithHover(Player player, ChatFormat format) {
-        Component displayName = player.displayName();
+        Component displayName = Colors.displayName(player);
         if (!hoverEnabled.getAsBoolean()) {
             return displayName;
         }

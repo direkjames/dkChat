@@ -46,6 +46,8 @@ public final class ShowcaseManager {
 
     public static final String BYPASS_COOLDOWN_PERMISSION = "dkchat.showcase.bypasscooldown";
     public static final String VIEW_PERMISSION = "dkchat.showcase.view";
+    /** Most [inv]/[echest] previews kept at once; the oldest is dropped first. */
+    private static final int MAX_SNAPSHOTS = 500;
 
     private final DkChat plugin;
     private final NamespacedKey previewKey;
@@ -184,7 +186,7 @@ public final class ShowcaseManager {
                 .replace("{item}", "<dk_item>")
                 .replace("{amount}", "<dk_amount>");
         return Colors.trusted(format, nameResolvers(player,
-                        Placeholder.component("dk_item", hand.effectiveName()),
+                        Placeholder.component("dk_item", Colors.inert(hand.effectiveName())),
                         Placeholder.component("dk_amount", amountText)))
                 .hoverEvent(hover);
     }
@@ -193,6 +195,7 @@ public final class ShowcaseManager {
         UUID id = UUID.randomUUID();
         long expireMinutes = Math.max(1, config().getInt("showcase.snapshot-expire-minutes"));
         Component title = Colors.trusted(tokens(str(path(type, "title"))), nameResolvers(player));
+        trimSnapshots();
         snapshots.put(id, new Snapshot(title, contents, type.guiSize(),
                 System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(expireMinutes)));
 
@@ -200,6 +203,19 @@ public final class ShowcaseManager {
         return Colors.trusted(tokens(str(path(type, "format"))), nameResolvers(player))
                 .hoverEvent(HoverEvent.showText(hover))
                 .clickEvent(ClickEvent.runCommand("/dchat view " + id));
+    }
+
+    /** Keeps memory bounded even for players who bypass cooldowns. */
+    private void trimSnapshots() {
+        if (snapshots.size() < MAX_SNAPSHOTS) {
+            return;
+        }
+        snapshots.values().removeIf(Snapshot::expired);
+        while (snapshots.size() >= MAX_SNAPSHOTS) {
+            snapshots.entrySet().stream()
+                    .min(java.util.Map.Entry.comparingByValue(java.util.Comparator.comparingLong(Snapshot::expiresAt)))
+                    .ifPresent(oldest -> snapshots.remove(oldest.getKey()));
+        }
     }
 
     // --------------------------------------------------------------- capture
@@ -274,7 +290,7 @@ public final class ShowcaseManager {
         if (sizeOf(copy) <= max) {
             return copy;
         }
-        return HoverEvent.showText(item.effectiveName());
+        return HoverEvent.showText(Colors.inert(item.effectiveName()));
     }
 
     private static int sizeOf(ItemStack item) {
@@ -310,7 +326,7 @@ public final class ShowcaseManager {
     public void closeAll() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             InventoryView view = player.getOpenInventory();
-            if (view.getTopInventory().getHolder() instanceof SnapshotHolder) {
+            if (ShowcaseListener.isPreview(view.getTopInventory())) {
                 player.closeInventory();
             }
         }
@@ -318,10 +334,11 @@ public final class ShowcaseManager {
 
     /** True if the item is a copy made for a preview GUI (it should never exist outside one). */
     public boolean isPreviewItem(ItemStack item) {
-        if (item == null || item.getType().isAir() || !item.hasItemMeta()) {
+        if (item == null || item.getType().isAir()) {
             return false;
         }
-        return item.getItemMeta().getPersistentDataContainer().has(previewKey, PersistentDataType.BYTE);
+        // Read-only view: no copy of the item's data, so this is cheap on every click.
+        return item.getPersistentDataContainer().has(previewKey);
     }
 
     private ItemStack marked(ItemStack original) {
@@ -367,7 +384,7 @@ public final class ShowcaseManager {
 
     private static TagResolver[] nameResolvers(Player player, TagResolver... extra) {
         List<TagResolver> list = new ArrayList<>(List.of(extra));
-        list.add(Placeholder.component("dk_name", player.displayName()));
+        list.add(Placeholder.component("dk_name", Colors.displayName(player)));
         list.add(Placeholder.unparsed("dk_player", player.getName()));
         return list.toArray(TagResolver[]::new);
     }

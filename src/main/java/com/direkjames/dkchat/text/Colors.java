@@ -1,12 +1,17 @@
 package com.direkjames.dkchat.text;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -30,9 +35,6 @@ public final class Colors {
     private static final Pattern BUKKIT_HEX = Pattern.compile("[&§][xX]((?:[&§][0-9a-fA-F]){6})");
     private static final Pattern AMP_HEX = Pattern.compile("[&§]#([0-9a-fA-F]{6})");
     private static final Pattern LEGACY_CODE = Pattern.compile("[&§]([0-9a-fA-Fk-oK-OrR])");
-    /** Matches the "<" of a MiniMessage hex color tag, e.g. <#FF00AA> or <color:#FF00AA>. */
-    private static final Pattern MINI_HEX_OPEN = Pattern.compile(
-            "<(?=/?(?:#|(?:c|color|colour):#)[0-9a-fA-F]{6}>)", Pattern.CASE_INSENSITIVE);
 
     private static final Map<Allow, MiniMessage> PLAYER_PARSERS = new ConcurrentHashMap<>();
 
@@ -58,13 +60,29 @@ public final class Colors {
 
     /** Parses text a player typed, limited to what {@code allow} permits. */
     public static Component player(String text, Allow allow) {
-        String s = text;
-        if (!allow.hex()) {
-            // Escape MiniMessage hex tags so they show as plain text.
-            s = MINI_HEX_OPEN.matcher(s).replaceAll(Matcher.quoteReplacement("\\<"));
-        }
-        s = legacyToMini(s, allow);
+        String s = legacyToMini(text, allow);
         return PLAYER_PARSERS.computeIfAbsent(allow, Colors::buildPlayerParser).deserialize(s);
+    }
+
+    /** The player's display name (EssentialsX nickname) with any click, hover or insertion removed. */
+    public static Component displayName(Player player) {
+        return inert(player.displayName());
+    }
+
+    /**
+     * Removes click, hover and insertion from a component and all its children. Used on names
+     * that come from other plugins or items, so they can't carry a run_command click into chat.
+     */
+    public static Component inert(Component component) {
+        Component out = component.clickEvent(null).hoverEvent(null).insertion(null);
+        if (component.children().isEmpty()) {
+            return out;
+        }
+        List<Component> children = new ArrayList<>(component.children().size());
+        for (Component child : component.children()) {
+            children.add(inert(child));
+        }
+        return out.children(children);
     }
 
     /**
@@ -123,8 +141,15 @@ public final class Colors {
 
     private static MiniMessage buildPlayerParser(Allow allow) {
         TagResolver.Builder tags = TagResolver.builder();
-        if (allow.colors() || allow.hex()) {
+        if (allow.hex()) {
+            // Named colors and HEX: <red>, <#FF00AA>, <color:#FF00AA>.
             tags.resolver(StandardTags.color());
+        } else if (allow.colors()) {
+            // Named colors only. A separate resolver means HEX tags simply don't exist for
+            // this player, so there is no escaping trick that can turn them on.
+            for (Map.Entry<String, NamedTextColor> color : NamedTextColor.NAMES.keyToValue().entrySet()) {
+                tags.resolver(Placeholder.styling(color.getKey(), color.getValue()));
+            }
         }
         if (allow.colors() || allow.decorations()) {
             tags.resolver(StandardTags.reset());

@@ -1,6 +1,7 @@
 package com.direkjames.dkchat.config;
 
 import com.direkjames.dkchat.text.Colors;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -33,7 +34,8 @@ public final class Messages {
         String prefix = configs.messages().getString("prefix");
         String out = raw.replace("{prefix}", prefix == null ? "" : prefix);
         for (int i = 0; i + 1 < replacements.length; i += 2) {
-            out = out.replace("{" + replacements[i] + "}", replacements[i + 1]);
+            // Values can be typed by players (e.g. a name in /msg), so they are never parsed as tags.
+            out = out.replace("{" + replacements[i] + "}", MiniMessage.miniMessage().escapeTags(replacements[i + 1]));
         }
         return out;
     }

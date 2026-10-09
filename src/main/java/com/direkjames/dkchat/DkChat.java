@@ -1,6 +1,11 @@
 package com.direkjames.dkchat;
 
+import com.direkjames.dkchat.ad.AdManager;
+import com.direkjames.dkchat.announce.AnnouncementManager;
+import com.direkjames.dkchat.command.AdCommand;
+import com.direkjames.dkchat.command.ClearChatCommand;
 import com.direkjames.dkchat.command.DChatCommand;
+import com.direkjames.dkchat.hook.VaultHook;
 import com.direkjames.dkchat.command.IgnoreCommand;
 import com.direkjames.dkchat.command.PmCommandRegistrar;
 import com.direkjames.dkchat.command.SpyCommand;
@@ -37,6 +42,9 @@ public final class DkChat extends JavaPlugin {
     private PrivateMessageService privateMessages;
     private PmCommandRegistrar pmCommands;
     private ShowcaseManager showcase;
+    private VaultHook vault;
+    private AdManager ads;
+    private AnnouncementManager announcements;
 
     @Override
     public void onEnable() {
@@ -65,6 +73,11 @@ public final class DkChat extends JavaPlugin {
         showcase.reload();
         showcase.startCleanup();
 
+        vault = new VaultHook(getLogger());
+        ads = new AdManager(this, liteBans, vault);
+        announcements = new AnnouncementManager(this);
+        int announcementCount = announcements.reload();
+
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
         getServer().getPluginManager().registerEvents(new ShowcaseListener(this, showcase), this);
         getServer().getPluginManager().registerEvents(users, this);
@@ -76,9 +89,12 @@ public final class DkChat extends JavaPlugin {
         pmCommands.takeOver();
         registerCommand("spy", "Toggle private message spy", List.of("socialspy"), new SpyCommand(this));
         registerCommand("ignore", "Ignore a player's chat and private messages", new IgnoreCommand(this));
+        registerCommand("ad", "Advertise something to the whole server", List.of("advertise"), new AdCommand(this));
+        registerCommand("clearchat", "Clear your chat", List.of("cc", "chatclear"), new ClearChatCommand(this));
 
         logHooks();
-        getLogger().info("dkChat enabled with " + loaded + " chat format(s). Made by direk james.");
+        getLogger().info("dkChat enabled with " + loaded + " chat format(s) and "
+                + announcementCount + " announcement(s). Made by direk james.");
     }
 
     @Override
@@ -86,6 +102,12 @@ public final class DkChat extends JavaPlugin {
         // Never leave a preview GUI open without the listener that protects it.
         if (showcase != null) {
             showcase.closeAll();
+        }
+        if (announcements != null) {
+            announcements.stop();
+        }
+        if (pmCommands != null) {
+            pmCommands.release();
         }
     }
 
@@ -99,6 +121,7 @@ public final class DkChat extends JavaPlugin {
         }
         int loaded = formats.load(configs.formats(), getLogger());
         showcase.reload();
+        announcements.reload();
         // Also reclaims /msg, /tell, /w... if another plugin took them after startup.
         pmCommands.takeOver();
         return loaded;
@@ -145,6 +168,14 @@ public final class DkChat extends JavaPlugin {
 
     public UserManager users() {
         return users;
+    }
+
+    public AdManager ads() {
+        return ads;
+    }
+
+    public AnnouncementManager announcements() {
+        return announcements;
     }
 
     public ShowcaseManager showcase() {

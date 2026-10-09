@@ -63,6 +63,23 @@ public final class DChatCommand implements BasicCommand {
                         "time", String.valueOf(ms),
                         "formats", String.valueOf(loaded));
             }
+            case "announce" -> {
+                if (!sender.hasPermission(ADMIN)) {
+                    plugin.messages().send(sender, "no-permission");
+                    return;
+                }
+                if (args.length < 2) {
+                    plugin.messages().send(sender, "announce-usage",
+                            "list", String.join(", ", plugin.announcements().ids()));
+                    return;
+                }
+                if (plugin.announcements().sendNow(args[1])) {
+                    plugin.messages().send(sender, "announce-sent", "id", args[1]);
+                } else {
+                    plugin.messages().send(sender, "announce-unknown", "id", args[1],
+                            "list", String.join(", ", plugin.announcements().ids()));
+                }
+            }
             case "view" -> {
                 // Used by the click on [inv] / [echest] in chat. Not shown in tab completion.
                 if (!(sender instanceof Player player)) {
@@ -89,6 +106,12 @@ public final class DChatCommand implements BasicCommand {
 
     @Override
     public Collection<String> suggest(CommandSourceStack source, String[] args) {
+        if (args.length == 2 && args[0].equalsIgnoreCase("announce") && source.getSender().hasPermission(ADMIN)) {
+            String typedId = args[1].toLowerCase(Locale.ROOT);
+            return plugin.announcements().ids().stream()
+                    .filter(id -> id.toLowerCase(Locale.ROOT).startsWith(typedId))
+                    .toList();
+        }
         if (args.length > 1) {
             return List.of();
         }
@@ -96,6 +119,7 @@ public final class DChatCommand implements BasicCommand {
         List<String> options = new ArrayList<>(List.of("help", "format"));
         if (source.getSender().hasPermission(ADMIN)) {
             options.add("reload");
+            options.add("announce");
         }
         options.removeIf(option -> !option.startsWith(typed));
         return options;

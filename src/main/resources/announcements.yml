@@ -1,0 +1,59 @@
+# ==========================================================
+#  dkChat - timed announcements
+#
+#  Every line supports &, HEX and MiniMessage colors, clickable
+#  MiniMessage tags (<click:open_url:...>), PlaceholderAPI
+#  (filled in for each player), {name} and {player}.
+#  Start a line with {center} to center it in the chat box.
+#
+#  Test one right away with: /dchat announce <id>
+# ==========================================================
+
+enabled: true
+# Seconds between announcements (minimum 10).
+interval: 300
+# random     = shuffled, no repeats until every announcement has been shown
+# sequential = in the order below
+mode: random
+# Skip announcements when fewer players than this are online.
+min-players: 1
+
+sound:
+  enabled: true
+  name: "block.note_block.chime"
+  volume: 0.6
+  pitch: 1.0
+
+announcements:
+  discord:
+    lines:
+      - ""
+      - "{center}<gradient:#5865F2:#9F6BFF><bold>DISCORD</bold></gradient>"
+      - "{center}<gray>Join our community and never miss an event!"
+      - "{center}<click:open_url:'https://discord.gg/your-invite'><hover:show_text:'<gray>Click to open'><#5865F2><underlined>discord.gg/your-invite</underlined></hover></click>"
+      - ""
+
+  rules:
+    lines:
+      - ""
+      - "{center}<gold><bold>SERVER RULES"
+      - "{center}<gray>No griefing, no cheating, be respectful."
+      - "{center}<gray>Read the full rules with <white>/rules"
+      - ""
+
+  ranks:
+    # Only players WITH this permission see it ("" = everyone).
+    permission: ""
+    # Players WITH this permission DON'T see it. Here: hide the rank ad from players who already have VIP.
+    hide-permission: "dkchat.format.vip"
+    lines:
+      - ""
+      - "{center}<gradient:#FFD700:#FFA500><bold>SUPPORT THE SERVER"
+      - "{center}<gray>Get <gold>VIP</gold> for colored chat, cheaper ads and more!"
+      - ""
+
+  vote:
+    # Set to false to turn a single announcement off without deleting it.
+    enabled: true
+    lines:
+      - "<dark_gray>[<green>Vote</green>]</dark_gray> <gray>Hey <white>{name}</white>, vote daily for rewards with <white>/vote</white>!"

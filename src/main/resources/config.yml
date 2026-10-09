@@ -80,3 +80,53 @@ showcase:
     format: "<dark_gray>[</dark_gray><light_purple>{player}'s Ender Chest</light_purple><dark_gray>]</dark_gray>"
     hover: "<gray>Click to view <white>{player}</white>'s ender chest"
     title: "<dark_gray>{player}'s Ender Chest"
+
+# /ad <message> - rank perk advertisements
+advertisement:
+  enabled: true
+  # Visible length of the message (colors don't count).
+  min-length: 10
+  max-length: 150
+  # Players use the HIGHEST priority tier they have the permission for.
+  #   cooldown: seconds between ads (saved on the player, survives relogs and restarts)
+  #   cost: money taken through Vault for each ad (0 = free). Only taken when the ad is sent.
+  # dkchat.ad.bypass skips both the cooldown and the cost.
+  tiers:
+    default:
+      priority: 0
+      permission: "dkchat.ad"
+      cooldown: 3600
+      cost: 1000
+    vip:
+      priority: 10
+      permission: "dkchat.ad.vip"
+      cooldown: 1800
+      cost: 500
+    mvp:
+      priority: 20
+      permission: "dkchat.ad.mvp"
+      cooldown: 900
+      cost: 0
+  # Lines sent to everyone. {name} (with hover), {player}, {message}, PlaceholderAPI for the sender.
+  # Start a line with {center} to center it.
+  format:
+    - ""
+    - "{center}<gradient:#FFB347:#FF6F61><bold>ADVERTISEMENT</bold></gradient>"
+    - "{center}<white>{message}"
+    - "{center}<gray>- {name}"
+    - ""
+  title:
+    enabled: false
+    title: "<gradient:#FFB347:#FF6F61><bold>Advertisement"
+    subtitle: "<gray>by {name}"
+  sound:
+    enabled: true
+    name: "block.note_block.pling"
+    volume: 0.8
+    pitch: 1.2
+  log-to-console: true
+
+# /clearchat (your own chat) and /clearchat all (staff)
+clear-chat:
+  # How many empty lines are sent. 100 fills the chat history on most clients.
+  lines: 100

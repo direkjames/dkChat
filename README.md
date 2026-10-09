@@ -9,12 +9,12 @@ Global chat plugin for our PurpurMC 26.3 server. Private plugin, made by **direk
 | 1 | Chat formats by permission, name hover tooltips, color pipeline, PlaceholderAPI, EssentialsX nicknames, DiscordSRV relay, `/dchat reload` | ✅ Done |
 | 2 | `/msg` `/m` `/tell` `/whisper` `/w` `/r`, social spy, `/ignore`, LiteBans mute support | ✅ Done |
 | 3 | `[item]` `[inv]` `[echest]` with anti-dupe and anti-spam limits | ✅ Done |
-| 4 | `/ad` with Vault cost and rank cooldowns, timed announcements with `{center}`, clear chat | Planned |
+| 4 | `/ad` with Vault cost and rank cooldowns, timed announcements with `{center}`, clear chat | ✅ Done |
 
 ## Requirements
 
 - PurpurMC / Paper 26.x, Java 25
-- Optional: PlaceholderAPI, EssentialsX, LuckPerms, DiscordSRV
+- Optional: PlaceholderAPI, EssentialsX, LuckPerms, LiteBans, Vault (any economy, e.g. dkBank), DiscordSRV
 
 ## Building
 
@@ -30,6 +30,7 @@ https://repo.papermc.io/repository/maven-public/io/papermc/paper/paper-api/
 | `config.yml` | General on/off switches |
 | `formats.yml` | Chat formats per rank, and name hover lines |
 | `messages.yml` | Every message the plugin sends |
+| `announcements.yml` | Timed announcements |
 
 All text supports `&` codes, HEX (`&#FF00AA`, `<#FF00AA>`) and MiniMessage. Run `/dchat reload` after editing.
 
@@ -56,6 +57,10 @@ Each player gets the highest `priority` format they have the `permission` for. O
 | `/spy` (`/socialspy`) | `dkchat.spy` | Turn private message spy on or off |
 | `/ignore <player>` | `dkchat.ignore` | Ignore or unignore a player |
 | `/ignore list` | `dkchat.ignore` | Show who you are ignoring |
+| `/ad <message>` (`/advertise`) | tier permission | Post an advertisement. `/ad` alone shows your cooldown |
+| `/clearchat` (`/cc` `/chatclear`) | `dkchat.clearchat` | Clear your own chat |
+| `/clearchat all` | `dkchat.clearchat.all` | Clear chat for everyone except `dkchat.clearchat.exempt` |
+| `/dchat announce <id>` | `dkchat.admin` | Send an announcement right now |
 | `/dchat view <id>` | `dkchat.showcase.view` | Opens an [inv] / [echest] preview (used by the chat click) |
 
 ## Permissions
@@ -80,6 +85,12 @@ Each player gets the highest `priority` format they have the `permission` for. O
 | `dkchat.showcase.enderchest` | everyone | `[echest]` / `[ec]` / `[enderchest]` in chat |
 | `dkchat.showcase.view` | everyone | Open [inv] / [echest] previews |
 | `dkchat.showcase.bypasscooldown` | op | No showcase cooldowns |
+| `dkchat.ad` | op | `/ad` default tier |
+| `dkchat.ad.vip`, `dkchat.ad.mvp` | none | Better `/ad` tiers (set in `config.yml`) |
+| `dkchat.ad.bypass` | op | No `/ad` cooldown or cost |
+| `dkchat.clearchat` | everyone | Clear your own chat |
+| `dkchat.clearchat.all` | op | Clear chat for everyone |
+| `dkchat.clearchat.exempt` | op | Not affected by `/clearchat all` |
 | `dkchat.format.<name>` | none | Whatever permission you set on a format in `formats.yml` |
 
 Players can never use click, hover or other interactive tags in their own messages, and PlaceholderAPI placeholders are never parsed in what players type.
@@ -91,6 +102,29 @@ Players can never use click, hover or other interactive tags in their own messag
 - **Anti-spam:** per-tag cooldowns (kept across relogs), each tag shown once per message, and a message on cooldown is blocked.
 - **Anti-crash:** oversized items (shulkers full of books) have heavy data removed from the chat hover.
 - Previews expire after `snapshot-expire-minutes`.
+
+## /ad
+
+- Tiers in `config.yml` (`advertisement.tiers`): each has a priority, permission, cooldown (seconds) and Vault cost. Players get the highest priority tier they have.
+- Checks happen in this order: tier, length, cooldown, balance, LiteBans mute. Money is taken only when the ad is actually sent.
+- Cooldowns are saved on the player and survive relogs and restarts. Players who `/ignore` the sender don't see their ads.
+- Lines, optional title and sound are configurable; start a line with `{center}` to center it.
+
+## Announcements
+
+- `announcements.yml`: interval, `random` (no repeats until all are shown) or `sequential`, minimum players, sound.
+- Each announcement can have `permission` (only these players see it) and `hide-permission` (these players don't).
+- Lines support `{center}`, clickable links, PlaceholderAPI per player, `{name}` and `{player}`.
+
+## Security and performance
+
+- **No click/command injection:** player messages can't use click, hover, insert or similar tags. PlaceholderAPI values are cleaned of those tags too (custom tags or nicknames from other plugins can't add a `run_command` click), and display names and item names have click/hover/insert removed before they are shown.
+- **Color permissions can't be bypassed:** players without `dkchat.color.hex` get a parser that only knows named colors, so no escape trick enables HEX.
+- **Typed values in plugin messages** (like a name in `/msg`) are never parsed as tags.
+- **Anti-dupe preview GUIs** with marked items as a second layer (see above). The check runs on a read-only view of item data and never copies block data, so it costs almost nothing per inventory click.
+- **Bounded memory:** at most 500 previews are kept (oldest dropped first), expired previews and cooldowns are cleaned every minute, per-player data is dropped on quit, and `/msg` and `/r` are unregistered when the plugin disables.
+- **Main thread safety:** inventories are only read on the main thread; LiteBans checks run off the main thread.
+- **Older config files:** missing options use the defaults built into the jar, and the console lists which ones are missing.
 
 ## Compatibility notes
 

@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -31,7 +32,7 @@ public final class ShowcaseListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onClick(InventoryClickEvent event) {
-        if (event.getView().getTopInventory().getHolder() instanceof SnapshotHolder) {
+        if (isPreview(event.getView().getTopInventory())) {
             event.setCancelled(true);
             return;
         }
@@ -50,7 +51,7 @@ public final class ShowcaseListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onDrag(InventoryDragEvent event) {
-        if (event.getView().getTopInventory().getHolder() instanceof SnapshotHolder
+        if (isPreview(event.getView().getTopInventory())
                 || showcase.isPreviewItem(event.getOldCursor())) {
             event.setCancelled(true);
         }
@@ -72,6 +73,11 @@ public final class ShowcaseListener implements Listener {
             event.setCancelled(true);
             event.getItem().remove();
         }
+    }
+
+    /** getHolder(false) avoids copying block data on every click in chests, furnaces, etc. */
+    static boolean isPreview(Inventory inventory) {
+        return inventory.getHolder(false) instanceof SnapshotHolder;
     }
 
     private void warn(HumanEntity who, String action) {

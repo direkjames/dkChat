@@ -59,6 +59,25 @@ permissions:
     description: No cooldown on [item], [inv] and [echest].
     default: op
 
+  # /ad
+  dkchat.ad:
+    description: Use /ad with the default tier. Give dkchat.ad.vip / dkchat.ad.mvp for better tiers.
+    default: op
+  dkchat.ad.bypass:
+    description: No cooldown and no cost for /ad.
+    default: op
+
+  # /clearchat
+  dkchat.clearchat:
+    description: Clear your own chat.
+    default: true
+  dkchat.clearchat.all:
+    description: Clear the chat for everyone.
+    default: op
+  dkchat.clearchat.exempt:
+    description: Your chat isn't cleared by /clearchat all.
+    default: op
+
   # What players are allowed to use inside their own chat messages.
   dkchat.color.legacy:
     description: Use & color codes (&a, &c...) and named MiniMessage colors (<red>) in chat.
