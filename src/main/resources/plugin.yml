@@ -18,6 +18,30 @@ permissions:
     description: Use admin commands like /dchat reload.
     default: op
 
+  # Private messages
+  dkchat.msg:
+    description: Use /msg, /m, /tell, /whisper, /w, /r and /reply.
+    default: true
+  dkchat.msg.seevanished:
+    description: Message and tab-complete vanished players.
+    default: op
+
+  # Spy
+  dkchat.spy:
+    description: See other players' private messages. On automatically, /spy toggles it.
+    default: op
+  dkchat.spy.exempt:
+    description: Private messages to or from this player are hidden from spies. Not given to OPs automatically.
+    default: false
+
+  # Ignore
+  dkchat.ignore:
+    description: Use /ignore.
+    default: true
+  dkchat.ignore.exempt:
+    description: Can't be ignored (for staff).
+    default: op
+
   # What players are allowed to use inside their own chat messages.
   dkchat.color.legacy:
     description: Use & color codes (&a, &c...) and named MiniMessage colors (<red>) in chat.

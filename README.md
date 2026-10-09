@@ -7,7 +7,7 @@ Global chat plugin for our PurpurMC 26.3 server. Private plugin, made by **direk
 | Phase | Features | Status |
 |---|---|---|
 | 1 | Chat formats by permission, name hover tooltips, color pipeline, PlaceholderAPI, EssentialsX nicknames, DiscordSRV relay, `/dchat reload` | ✅ Done |
-| 2 | `/msg` `/m` `/tell` `/whisper` `/r`, social spy, `/ignore`, LiteBans mute support | Planned |
+| 2 | `/msg` `/m` `/tell` `/whisper` `/w` `/r`, social spy, `/ignore`, LiteBans mute support | ✅ Done |
 | 3 | `[item]` `[inv]` `[echest]` with anti-dupe and anti-spam limits | Planned |
 | 4 | `/ad` with Vault cost and rank cooldowns, timed announcements with `{center}`, clear chat | Planned |
 
@@ -51,6 +51,11 @@ Each player gets the highest `priority` format they have the `permission` for. O
 | `/dchat help` | none | Command list |
 | `/dchat format` | none | Shows which chat format you are using |
 | `/dchat reload` | `dkchat.admin` | Reloads all config files |
+| `/msg <player> <message>` (`/m` `/tell` `/whisper` `/w`) | `dkchat.msg` | Send a private message |
+| `/r <message>` (`/reply`) | `dkchat.msg` | Reply to the last person you talked to |
+| `/spy` (`/socialspy`) | `dkchat.spy` | Turn private message spy on or off |
+| `/ignore <player>` | `dkchat.ignore` | Ignore or unignore a player |
+| `/ignore list` | `dkchat.ignore` | Show who you are ignoring |
 
 ## Permissions
 
@@ -63,6 +68,12 @@ Each player gets the highest `priority` format they have the `permission` for. O
 | `dkchat.color.hex` | op | HEX colors in chat |
 | `dkchat.color.gradient` | op | `<gradient>` and `<rainbow>` in chat |
 | `dkchat.color.*` | op | All of the color permissions |
+| `dkchat.msg` | everyone | Private messages and replies |
+| `dkchat.msg.seevanished` | op | Message and tab-complete vanished players |
+| `dkchat.spy` | op | See private messages (on automatically, `/spy` toggles) |
+| `dkchat.spy.exempt` | nobody | Hides this player's private messages from spies |
+| `dkchat.ignore` | everyone | Use `/ignore` |
+| `dkchat.ignore.exempt` | op | Can't be ignored (staff) |
 | `dkchat.format.<name>` | none | Whatever permission you set on a format in `formats.yml` |
 
 Players can never use click, hover or other interactive tags in their own messages, and PlaceholderAPI placeholders are never parsed in what players type.
@@ -71,4 +82,6 @@ Players can never use click, hover or other interactive tags in their own messag
 
 - **EssentialsX nicknames:** keep `change-displayname: true` in the Essentials config. If Essentials adds rank prefixes to display names (`add-prefix-suffix`), turn that off so prefixes don't show twice.
 - **DiscordSRV:** dkChat formats chat through Paper's chat event and passes the colored message along, so DiscordSRV relays it. If your DiscordSRV config has `UseModernPaperChatEvent`, set it to `true`.
-- **LiteBans:** muted players' chat is cancelled by LiteBans before dkChat formats it.
+- **LiteBans:** muted players' public chat is cancelled by LiteBans before dkChat formats it. Muted players also can't use `/msg` or `/r`; dkChat asks LiteBans in the background before sending.
+- **Spy and ignore data** are saved on each player (persistent data), so they survive relogs and restarts. Spy is on automatically for anyone with `dkchat.spy`.
+- **Vanish:** players the sender can't see are treated as offline in `/msg`, `/r` and tab completion.

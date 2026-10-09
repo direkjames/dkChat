@@ -18,3 +18,30 @@ name-hover:
   # Show a tooltip when hovering over a player's name in chat.
   # The lines are set per format in formats.yml.
   enabled: true
+
+# /msg, /m, /tell, /whisper, /w and /r
+private-messages:
+  # {sender} and {receiver} are player names (with the same hover tooltip as public chat).
+  # {message} is the message. PlaceholderAPI placeholders are filled in for the sender.
+  # Leave a format empty ("") to not send that line.
+  sender-format: "<dark_gray>[<gray>You</gray> → {receiver}<dark_gray>]</dark_gray> <#D8C8FF>{message}"
+  receiver-format: "<dark_gray>[{sender} <dark_gray>→</dark_gray> <gray>You</gray>]</dark_gray> <#D8C8FF>{message}"
+  # What players with spy turned on see (dkchat.spy).
+  spy-format: "<dark_gray>[<red>Spy</red>]</dark_gray> {sender} <dark_gray>→</dark_gray> {receiver}<dark_gray>:</dark_gray> <gray>{message}"
+  # Written to the server console/log for every private message between players.
+  log-to-console: true
+  console-format: "[PM] {sender} -> {receiver}: {message}"
+  # How the console's name shows when it sends or receives a message.
+  console-name: "<red>Console"
+  # Sound the receiver hears. Uses Minecraft sound names.
+  sound:
+    enabled: true
+    name: "entity.experience_orb.pickup"
+    volume: 0.6
+    pitch: 1.4
+
+ignore:
+  # Most players one person can have on their /ignore list.
+  max-ignored: 50
+  # Also hide public chat from players you ignore (private messages are always blocked).
+  hide-public-chat: true

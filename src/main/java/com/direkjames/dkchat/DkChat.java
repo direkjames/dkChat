@@ -1,6 +1,13 @@
 package com.direkjames.dkchat;
 
 import com.direkjames.dkchat.command.DChatCommand;
+import com.direkjames.dkchat.command.IgnoreCommand;
+import com.direkjames.dkchat.command.MsgCommand;
+import com.direkjames.dkchat.command.ReplyCommand;
+import com.direkjames.dkchat.command.SpyCommand;
+import com.direkjames.dkchat.hook.LiteBansHook;
+import com.direkjames.dkchat.pm.PrivateMessageService;
+import com.direkjames.dkchat.user.UserManager;
 import com.direkjames.dkchat.config.ConfigManager;
 import com.direkjames.dkchat.config.Messages;
 import com.direkjames.dkchat.format.FormatManager;
@@ -24,6 +31,9 @@ public final class DkChat extends JavaPlugin {
     private FormatManager formats;
     private FormatRenderer renderer;
     private PlaceholderHook placeholders;
+    private UserManager users;
+    private LiteBansHook liteBans;
+    private PrivateMessageService privateMessages;
 
     @Override
     public void onEnable() {
@@ -43,8 +53,19 @@ public final class DkChat extends JavaPlugin {
         renderer = new FormatRenderer(formats, placeholders,
                 () -> configs.config().getBoolean("name-hover.enabled", true));
 
+        users = new UserManager(this);
+        users.loadOnline();
+        liteBans = LiteBansHook.create(getLogger());
+        privateMessages = new PrivateMessageService(this, liteBans);
+
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+        getServer().getPluginManager().registerEvents(users, this);
+
         registerCommand("dchat", "dkChat main command", List.of("dkchat"), new DChatCommand(this));
+        registerCommand("msg", "Send a private message", List.of("m", "tell", "whisper", "w"), new MsgCommand(this));
+        registerCommand("r", "Reply to your last private message", List.of("reply"), new ReplyCommand(this));
+        registerCommand("spy", "Toggle private message spy", List.of("socialspy"), new SpyCommand(this));
+        registerCommand("ignore", "Ignore a player's chat and private messages", new IgnoreCommand(this));
 
         logHooks();
         getLogger().info("dkChat enabled with " + loaded + " chat format(s). Made by direk james.");
@@ -67,6 +88,9 @@ public final class DkChat extends JavaPlugin {
             getLogger().info("Hooked into PlaceholderAPI.");
         } else {
             getLogger().warning("PlaceholderAPI not found. %placeholders% in formats will show as plain text.");
+        }
+        if (liteBans != null) {
+            getLogger().info("Hooked into LiteBans. Muted players can't send private messages.");
         }
         if (pm.isPluginEnabled("Essentials")) {
             getLogger().info("EssentialsX found. Nicknames come from display names "
@@ -95,5 +119,13 @@ public final class DkChat extends JavaPlugin {
 
     public PlaceholderHook placeholders() {
         return placeholders;
+    }
+
+    public UserManager users() {
+        return users;
+    }
+
+    public PrivateMessageService privateMessages() {
+        return privateMessages;
     }
 }

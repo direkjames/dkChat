@@ -2,6 +2,7 @@ package com.direkjames.dkchat.listener;
 
 import com.direkjames.dkchat.DkChat;
 import com.direkjames.dkchat.format.ChatFormat;
+import com.direkjames.dkchat.pm.PrivateMessageService;
 import com.direkjames.dkchat.text.Colors;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -11,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import java.util.UUID;
 
 /**
  * Formats public chat.
@@ -45,6 +48,14 @@ public final class ChatListener implements Listener {
 
         // Setting the message (not just the renderer) is what DiscordSRV relays to Discord.
         event.message(message);
+
+        // Players who /ignore the sender don't see their public chat. Staff can't be ignored.
+        if (plugin.configs().config().getBoolean("ignore.hide-public-chat", true)
+                && !player.hasPermission(PrivateMessageService.IGNORE_EXEMPT_PERMISSION)) {
+            UUID senderId = player.getUniqueId();
+            event.viewers().removeIf(viewer -> viewer instanceof Player p
+                    && plugin.users().isIgnoring(p.getUniqueId(), senderId));
+        }
 
         ChatFormat format = plugin.formats().select(player);
         event.renderer(ChatRenderer.viewerUnaware(

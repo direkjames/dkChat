@@ -15,7 +15,7 @@ public final class Messages {
     }
 
     public void send(CommandSender to, String key, String... replacements) {
-        String raw = configs.messages().getString(key, "");
+        String raw = configs.messages().getString(key);
         if (raw == null || raw.isEmpty()) {
             return;
         }
@@ -30,7 +30,8 @@ public final class Messages {
     }
 
     private String fill(String raw, String... replacements) {
-        String out = raw.replace("{prefix}", configs.messages().getString("prefix", ""));
+        String prefix = configs.messages().getString("prefix");
+        String out = raw.replace("{prefix}", prefix == null ? "" : prefix);
         for (int i = 0; i + 1 < replacements.length; i += 2) {
             out = out.replace("{" + replacements[i] + "}", replacements[i + 1]);
         }

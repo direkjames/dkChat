@@ -14,9 +14,37 @@ reload-failed: "{prefix}<red>Reload failed. A config file has a YAML error, chec
 
 your-format: "{prefix}<gray>You are using the <white>{format}</white> chat format <dark_gray>(priority {priority})</dark_gray>."
 
+# Private messages
+player-not-found: "{prefix}<red><white>{player}</white> is not online."
+msg-usage: "{prefix}<gray>Usage: <white>/msg <player> <message>"
+msg-self: "{prefix}<red>You can't message yourself."
+msg-empty: "{prefix}<red>Your message is empty."
+msg-ignored: "{prefix}<red>You can't send messages to <white>{player}</white>."
+msg-muted: "{prefix}<red>You are muted and can't send private messages."
+reply-usage: "{prefix}<gray>Usage: <white>/r <message>"
+reply-none: "{prefix}<red>You have nobody to reply to."
+reply-offline: "{prefix}<red>The player you were talking to is no longer online."
+
+# Spy
+spy-enabled: "{prefix}<green>Spy enabled.</green> <gray>You will see private messages."
+spy-disabled: "{prefix}<red>Spy disabled.</red> <gray>You won't see private messages."
+
+# Ignore
+ignore-usage: "{prefix}<gray>Usage: <white>/ignore <player></white> or <white>/ignore list"
+ignore-self: "{prefix}<red>You can't ignore yourself."
+ignore-exempt: "{prefix}<red>You can't ignore <white>{player}</white>."
+ignore-full: "{prefix}<red>Your ignore list is full ({max} players). Remove someone first."
+ignore-added: "{prefix}<gray>You are now ignoring <white>{player}</white>."
+ignore-removed: "{prefix}<gray>You are no longer ignoring <white>{player}</white>."
+ignore-list: "{prefix}<gray>Ignored players ({count}): <white>{players}"
+ignore-list-empty: "{prefix}<gray>You aren't ignoring anyone."
+
 help:
   - "<gradient:#5B8CFF:#9F6BFF><bold>dkChat</bold></gradient> <gray>v{version} by direk james"
   - "<white>/dchat format</white> <dark_gray>-</dark_gray> <gray>See which chat format you are using"
+  - "<white>/msg <player> <message></white> <dark_gray>-</dark_gray> <gray>Send a private message"
+  - "<white>/r <message></white> <dark_gray>-</dark_gray> <gray>Reply to your last private message"
+  - "<white>/ignore <player></white> <dark_gray>-</dark_gray> <gray>Ignore or unignore a player"
 
 help-admin:
   - "<white>/dchat reload</white> <dark_gray>-</dark_gray> <gray>Reload all config files"
