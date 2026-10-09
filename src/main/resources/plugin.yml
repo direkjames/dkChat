@@ -42,6 +42,23 @@ permissions:
     description: Can't be ignored (for staff).
     default: op
 
+  # [item] / [inv] / [echest]
+  dkchat.showcase.item:
+    description: Show the held item in chat with [i] / [item].
+    default: true
+  dkchat.showcase.inventory:
+    description: Show your inventory in chat with [inv] / [inventory].
+    default: true
+  dkchat.showcase.enderchest:
+    description: Show your ender chest in chat with [echest] / [ec] / [enderchest].
+    default: true
+  dkchat.showcase.view:
+    description: Click [inv] / [echest] in chat to open the preview.
+    default: true
+  dkchat.showcase.bypasscooldown:
+    description: No cooldown on [item], [inv] and [echest].
+    default: op
+
   # What players are allowed to use inside their own chat messages.
   dkchat.color.legacy:
     description: Use & color codes (&a, &c...) and named MiniMessage colors (<red>) in chat.

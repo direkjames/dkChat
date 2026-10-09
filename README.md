@@ -8,7 +8,7 @@ Global chat plugin for our PurpurMC 26.3 server. Private plugin, made by **direk
 |---|---|---|
 | 1 | Chat formats by permission, name hover tooltips, color pipeline, PlaceholderAPI, EssentialsX nicknames, DiscordSRV relay, `/dchat reload` | ✅ Done |
 | 2 | `/msg` `/m` `/tell` `/whisper` `/w` `/r`, social spy, `/ignore`, LiteBans mute support | ✅ Done |
-| 3 | `[item]` `[inv]` `[echest]` with anti-dupe and anti-spam limits | Planned |
+| 3 | `[item]` `[inv]` `[echest]` with anti-dupe and anti-spam limits | ✅ Done |
 | 4 | `/ad` with Vault cost and rank cooldowns, timed announcements with `{center}`, clear chat | Planned |
 
 ## Requirements
@@ -56,6 +56,7 @@ Each player gets the highest `priority` format they have the `permission` for. O
 | `/spy` (`/socialspy`) | `dkchat.spy` | Turn private message spy on or off |
 | `/ignore <player>` | `dkchat.ignore` | Ignore or unignore a player |
 | `/ignore list` | `dkchat.ignore` | Show who you are ignoring |
+| `/dchat view <id>` | `dkchat.showcase.view` | Opens an [inv] / [echest] preview (used by the chat click) |
 
 ## Permissions
 
@@ -74,9 +75,22 @@ Each player gets the highest `priority` format they have the `permission` for. O
 | `dkchat.spy.exempt` | nobody | Hides this player's private messages from spies |
 | `dkchat.ignore` | everyone | Use `/ignore` |
 | `dkchat.ignore.exempt` | op | Can't be ignored (staff) |
+| `dkchat.showcase.item` | everyone | `[i]` / `[item]` in chat |
+| `dkchat.showcase.inventory` | everyone | `[inv]` / `[inventory]` in chat |
+| `dkchat.showcase.enderchest` | everyone | `[echest]` / `[ec]` / `[enderchest]` in chat |
+| `dkchat.showcase.view` | everyone | Open [inv] / [echest] previews |
+| `dkchat.showcase.bypasscooldown` | op | No showcase cooldowns |
 | `dkchat.format.<name>` | none | Whatever permission you set on a format in `formats.yml` |
 
 Players can never use click, hover or other interactive tags in their own messages, and PlaceholderAPI placeholders are never parsed in what players type.
+
+## [item], [inv], [echest]
+
+- Tags, cooldowns and looks are in the `showcase` section of `config.yml`.
+- **Anti-dupe:** inventories are copied the moment the message is sent. Previews open in a GUI where every click and drag is cancelled, and every copied item is marked; if one ever appears outside a preview it is deleted and logged. Previews are closed when the plugin shuts down.
+- **Anti-spam:** per-tag cooldowns (kept across relogs), each tag shown once per message, and a message on cooldown is blocked.
+- **Anti-crash:** oversized items (shulkers full of books) have heavy data removed from the chat hover.
+- Previews expire after `snapshot-expire-minutes`.
 
 ## Compatibility notes
 

@@ -39,12 +39,19 @@ ignore-removed: "{prefix}<gray>You are no longer ignoring <white>{player}</white
 ignore-list: "{prefix}<gray>Ignored players ({count}): <white>{players}"
 ignore-list-empty: "{prefix}<gray>You aren't ignoring anyone."
 
+# [item] / [inv] / [echest]
+showcase-cooldown: "{prefix}<red>You can use <white>{tag}</white> again in <white>{time}s</white>."
+showcase-empty-hand: "{prefix}<red>Hold an item in your hand to use <white>{tag}</white>."
+showcase-expired: "{prefix}<red>This preview has expired."
+showcase-failed: "{prefix}<red>Couldn't show that right now. Please try again."
+
 help:
   - "<gradient:#5B8CFF:#9F6BFF><bold>dkChat</bold></gradient> <gray>v{version} by direk james"
   - "<white>/dchat format</white> <dark_gray>-</dark_gray> <gray>See which chat format you are using"
   - "<white>/msg <player> <message></white> <dark_gray>-</dark_gray> <gray>Send a private message"
   - "<white>/r <message></white> <dark_gray>-</dark_gray> <gray>Reply to your last private message"
   - "<white>/ignore <player></white> <dark_gray>-</dark_gray> <gray>Ignore or unignore a player"
+  - "<gray>Type <white>[i]</white>, <white>[inv]</white> or <white>[ec]</white> in chat to show your item, inventory or ender chest"
 
 help-admin:
   - "<white>/dchat reload</white> <dark_gray>-</dark_gray> <gray>Reload all config files"

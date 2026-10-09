@@ -2,6 +2,7 @@ package com.direkjames.dkchat.command;
 
 import com.direkjames.dkchat.DkChat;
 import com.direkjames.dkchat.format.ChatFormat;
+import com.direkjames.dkchat.showcase.ShowcaseManager;
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 /** /dchat [help | format | reload] */
 public final class DChatCommand implements BasicCommand {
@@ -60,6 +62,26 @@ public final class DChatCommand implements BasicCommand {
                 plugin.messages().send(sender, "reload-success",
                         "time", String.valueOf(ms),
                         "formats", String.valueOf(loaded));
+            }
+            case "view" -> {
+                // Used by the click on [inv] / [echest] in chat. Not shown in tab completion.
+                if (!(sender instanceof Player player)) {
+                    plugin.messages().send(sender, "players-only");
+                    return;
+                }
+                if (!player.hasPermission(ShowcaseManager.VIEW_PERMISSION)) {
+                    plugin.messages().send(player, "no-permission");
+                    return;
+                }
+                UUID id;
+                try {
+                    id = args.length < 2 ? null : UUID.fromString(args[1]);
+                } catch (IllegalArgumentException e) {
+                    id = null;
+                }
+                if (id == null || !plugin.showcase().open(player, id)) {
+                    plugin.messages().send(player, "showcase-expired");
+                }
             }
             default -> plugin.messages().send(sender, "unknown-subcommand");
         }

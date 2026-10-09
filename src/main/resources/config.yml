@@ -45,3 +45,38 @@ ignore:
   max-ignored: 50
   # Also hide public chat from players you ignore (private messages are always blocked).
   hide-public-chat: true
+
+# [item], [inv] and [echest] in public chat
+showcase:
+  # How long the [inv] / [echest] previews can be opened after the message was sent.
+  snapshot-expire-minutes: 5
+  # Items bigger than this (in bytes) have book pages and container contents removed from
+  # the chat hover, so a shulker full of books can't kick players. The real item is untouched.
+  max-hover-bytes: 16384
+
+  # Placeholders in every format below: {name} display name, {player} username.
+  # Each tag is only shown once per message; repeats are removed.
+  # Cooldowns are in seconds (dkchat.showcase.bypasscooldown skips them) and survive relogs.
+  item:
+    enabled: true
+    tags: ["[i]", "[item]"]
+    cooldown: 30
+    # {item} is the item name (hover shows the full item), {amount} uses amount-format when more than 1.
+    format: "<dark_gray>[</dark_gray>{item}{amount}<dark_gray>]</dark_gray>"
+    amount-format: "<gray> x{count}</gray>"
+
+  inventory:
+    enabled: true
+    tags: ["[inv]", "[inventory]"]
+    cooldown: 60
+    format: "<dark_gray>[</dark_gray><aqua>{player}'s Inventory</aqua><dark_gray>]</dark_gray>"
+    hover: "<gray>Click to view <white>{player}</white>'s inventory"
+    title: "<dark_gray>{player}'s Inventory"
+
+  enderchest:
+    enabled: true
+    tags: ["[echest]", "[ec]", "[enderchest]"]
+    cooldown: 60
+    format: "<dark_gray>[</dark_gray><light_purple>{player}'s Ender Chest</light_purple><dark_gray>]</dark_gray>"
+    hover: "<gray>Click to view <white>{player}</white>'s ender chest"
+    title: "<dark_gray>{player}'s Ender Chest"

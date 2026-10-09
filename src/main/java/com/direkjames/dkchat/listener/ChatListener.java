@@ -46,6 +46,13 @@ public final class ChatListener implements Listener {
             return;
         }
 
+        // [item], [inv], [echest]. Null means the message was blocked (cooldown, empty hand).
+        message = plugin.showcase().apply(player, typed, message);
+        if (message == null) {
+            event.setCancelled(true);
+            return;
+        }
+
         // Setting the message (not just the renderer) is what DiscordSRV relays to Discord.
         event.message(message);
 

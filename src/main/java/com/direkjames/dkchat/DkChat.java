@@ -6,6 +6,8 @@ import com.direkjames.dkchat.command.PmCommandRegistrar;
 import com.direkjames.dkchat.command.SpyCommand;
 import com.direkjames.dkchat.hook.LiteBansHook;
 import com.direkjames.dkchat.pm.PrivateMessageService;
+import com.direkjames.dkchat.showcase.ShowcaseListener;
+import com.direkjames.dkchat.showcase.ShowcaseManager;
 import com.direkjames.dkchat.user.UserManager;
 import com.direkjames.dkchat.config.ConfigManager;
 import com.direkjames.dkchat.config.Messages;
@@ -34,6 +36,7 @@ public final class DkChat extends JavaPlugin {
     private LiteBansHook liteBans;
     private PrivateMessageService privateMessages;
     private PmCommandRegistrar pmCommands;
+    private ShowcaseManager showcase;
 
     @Override
     public void onEnable() {
@@ -58,7 +61,12 @@ public final class DkChat extends JavaPlugin {
         liteBans = LiteBansHook.create(getLogger());
         privateMessages = new PrivateMessageService(this, liteBans);
 
+        showcase = new ShowcaseManager(this);
+        showcase.reload();
+        showcase.startCleanup();
+
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+        getServer().getPluginManager().registerEvents(new ShowcaseListener(this, showcase), this);
         getServer().getPluginManager().registerEvents(users, this);
 
         registerCommand("dchat", "dkChat main command", List.of("dkchat"), new DChatCommand(this));
@@ -73,6 +81,14 @@ public final class DkChat extends JavaPlugin {
         getLogger().info("dkChat enabled with " + loaded + " chat format(s). Made by direk james.");
     }
 
+    @Override
+    public void onDisable() {
+        // Never leave a preview GUI open without the listener that protects it.
+        if (showcase != null) {
+            showcase.closeAll();
+        }
+    }
+
     /** Reloads every config file. Returns the number of formats loaded, or -1 if a file is broken. */
     public int reload() {
         try {
@@ -82,6 +98,7 @@ public final class DkChat extends JavaPlugin {
             return -1;
         }
         int loaded = formats.load(configs.formats(), getLogger());
+        showcase.reload();
         // Also reclaims /msg, /tell, /w... if another plugin took them after startup.
         pmCommands.takeOver();
         return loaded;
@@ -128,6 +145,10 @@ public final class DkChat extends JavaPlugin {
 
     public UserManager users() {
         return users;
+    }
+
+    public ShowcaseManager showcase() {
+        return showcase;
     }
 
     public PrivateMessageService privateMessages() {
