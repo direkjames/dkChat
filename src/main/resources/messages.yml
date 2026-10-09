@@ -1,0 +1,22 @@
+# ==========================================================
+#  dkChat - messages
+#  {prefix} is replaced with the prefix below in every message.
+# ==========================================================
+
+prefix: "<gradient:#5B8CFF:#9F6BFF><bold>dkChat</bold></gradient> <dark_gray>»</dark_gray> "
+
+no-permission: "{prefix}<red>You don't have permission to do that."
+players-only: "{prefix}<red>Only players can use this command."
+unknown-subcommand: "{prefix}<red>Unknown command. Use <white>/dchat help</white>."
+
+reload-success: "{prefix}<green>Reloaded in <white>{time}ms</white>. Loaded <white>{formats}</white> chat format(s)."
+reload-failed: "{prefix}<red>Reload failed. A config file has a YAML error, check the console. The old settings are still active."
+
+your-format: "{prefix}<gray>You are using the <white>{format}</white> chat format <dark_gray>(priority {priority})</dark_gray>."
+
+help:
+  - "<gradient:#5B8CFF:#9F6BFF><bold>dkChat</bold></gradient> <gray>v{version} by direk james"
+  - "<white>/dchat format</white> <dark_gray>-</dark_gray> <gray>See which chat format you are using"
+
+help-admin:
+  - "<white>/dchat reload</white> <dark_gray>-</dark_gray> <gray>Reload all config files"

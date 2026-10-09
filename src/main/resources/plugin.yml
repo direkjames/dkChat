@@ -1,0 +1,45 @@
+name: dkChat
+version: '${project.version}'
+main: com.direkjames.dkchat.DkChat
+api-version: '26.1'
+author: direk james
+description: ${project.description}
+softdepend:
+  - PlaceholderAPI
+  - Essentials
+  - LiteBans
+  - Vault
+  - DiscordSRV
+
+# Commands are registered in code through Paper's command API (see DkChat#onEnable).
+
+permissions:
+  dkchat.admin:
+    description: Use admin commands like /dchat reload.
+    default: op
+
+  # What players are allowed to use inside their own chat messages.
+  dkchat.color.legacy:
+    description: Use & color codes (&a, &c...) and named MiniMessage colors (<red>) in chat.
+    default: op
+  dkchat.color.format:
+    description: Use bold, italic, underline and strikethrough (&l &o &n &m / <bold> ...) in chat.
+    default: op
+  dkchat.color.magic:
+    description: Use obfuscated/magic text (&k / <obfuscated>) in chat.
+    default: op
+  dkchat.color.hex:
+    description: Use HEX colors (&#FF00AA / <#FF00AA>) in chat.
+    default: op
+  dkchat.color.gradient:
+    description: Use <gradient> and <rainbow> in chat.
+    default: op
+  dkchat.color.*:
+    description: All chat color permissions.
+    default: op
+    children:
+      dkchat.color.legacy: true
+      dkchat.color.format: true
+      dkchat.color.magic: true
+      dkchat.color.hex: true
+      dkchat.color.gradient: true

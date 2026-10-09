@@ -1,0 +1,20 @@
+# ==========================================================
+#  dkChat - by direk james
+#  Main settings. Chat formats live in formats.yml and every
+#  message the plugin sends lives in messages.yml.
+#
+#  Colors: every text in these files supports legacy & codes,
+#  HEX (&#FF00AA or <#FF00AA>) and MiniMessage
+#  (https://docs.advntr.dev/minimessage/format.html).
+#
+#  After editing, run /dchat reload.
+# ==========================================================
+
+chat:
+  # When false, dkChat leaves public chat alone (vanilla or another plugin formats it).
+  enabled: true
+
+name-hover:
+  # Show a tooltip when hovering over a player's name in chat.
+  # The lines are set per format in formats.yml.
+  enabled: true

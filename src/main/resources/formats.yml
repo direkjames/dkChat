@@ -1,0 +1,52 @@
+# ==========================================================
+#  dkChat - chat formats
+#
+#  Each player uses the HIGHEST priority format they have the
+#  permission for. A format with an empty permission ("") is
+#  available to everyone, so keep one as your default.
+#
+#  Placeholders:
+#    {name}     display name (shows EssentialsX /nick nicknames)
+#    {player}   real Minecraft username
+#    {message}  what the player typed
+#    %...%      any PlaceholderAPI placeholder (ranks, tags, titles...)
+#
+#  Note: OP players have every permission, so they will always
+#  get the highest priority format.
+# ==========================================================
+
+# Hover lines used by any format that doesn't set its own "hover".
+# Set "hover: []" on a format to turn the tooltip off for that format.
+default-hover:
+  - "<gradient:#5B8CFF:#9F6BFF><bold>{name}</bold></gradient>"
+  - "<gray>Username: <white>{player}"
+  - "<gray>Rank: <white>%luckperms_primary_group_name%"
+  - "<gray>Ping: <white>%player_ping%ms"
+
+formats:
+  default:
+    priority: 0
+    permission: ""
+    format: "%luckperms_prefix%<gray>{name}</gray> <dark_gray>»</dark_gray> <white>{message}"
+
+  vip:
+    priority: 10
+    permission: "dkchat.format.vip"
+    format: "%luckperms_prefix%<gold>{name}</gold> <dark_gray>»</dark_gray> <yellow>{message}"
+    hover:
+      - "<gold><bold>{name}"
+      - "<gray>Username: <white>{player}"
+      - "<gray>Rank: <gold>VIP"
+      - ""
+      - "<yellow>Thanks for supporting the server!"
+
+  staff:
+    priority: 100
+    permission: "dkchat.format.staff"
+    format: "%luckperms_prefix%<color:#FF5555>{name}</color> <dark_gray>»</dark_gray> <#FFD6D6>{message}"
+    hover:
+      - "<#FF5555><bold>{name}"
+      - "<gray>Username: <white>{player}"
+      - "<gray>Rank: <white>%luckperms_primary_group_name%"
+      - ""
+      - "<#FF5555>Server staff member"
