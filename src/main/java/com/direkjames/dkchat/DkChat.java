@@ -2,8 +2,7 @@ package com.direkjames.dkchat;
 
 import com.direkjames.dkchat.command.DChatCommand;
 import com.direkjames.dkchat.command.IgnoreCommand;
-import com.direkjames.dkchat.command.MsgCommand;
-import com.direkjames.dkchat.command.ReplyCommand;
+import com.direkjames.dkchat.command.PmCommandRegistrar;
 import com.direkjames.dkchat.command.SpyCommand;
 import com.direkjames.dkchat.hook.LiteBansHook;
 import com.direkjames.dkchat.pm.PrivateMessageService;
@@ -34,6 +33,7 @@ public final class DkChat extends JavaPlugin {
     private UserManager users;
     private LiteBansHook liteBans;
     private PrivateMessageService privateMessages;
+    private PmCommandRegistrar pmCommands;
 
     @Override
     public void onEnable() {
@@ -62,8 +62,10 @@ public final class DkChat extends JavaPlugin {
         getServer().getPluginManager().registerEvents(users, this);
 
         registerCommand("dchat", "dkChat main command", List.of("dkchat"), new DChatCommand(this));
-        registerCommand("msg", "Send a private message", List.of("m", "tell", "whisper", "w"), new MsgCommand(this));
-        registerCommand("r", "Reply to your last private message", List.of("reply"), new ReplyCommand(this));
+        // /msg and /r are Bukkit commands taken over after startup, see PmCommandRegistrar.
+        pmCommands = new PmCommandRegistrar(this);
+        getServer().getPluginManager().registerEvents(pmCommands, this);
+        pmCommands.takeOver();
         registerCommand("spy", "Toggle private message spy", List.of("socialspy"), new SpyCommand(this));
         registerCommand("ignore", "Ignore a player's chat and private messages", new IgnoreCommand(this));
 
@@ -79,7 +81,10 @@ public final class DkChat extends JavaPlugin {
             getLogger().log(Level.SEVERE, "Reload failed, keeping the previous settings.", e);
             return -1;
         }
-        return formats.load(configs.formats(), getLogger());
+        int loaded = formats.load(configs.formats(), getLogger());
+        // Also reclaims /msg, /tell, /w... if another plugin took them after startup.
+        pmCommands.takeOver();
+        return loaded;
     }
 
     private void logHooks() {
