@@ -58,7 +58,8 @@ public final class DkChat extends JavaPlugin {
         }
 
         messages = new Messages(configs);
-        placeholders = new PlaceholderHook();
+        placeholders = new PlaceholderHook(
+                () -> configs.config().getStringList("placeholders.nested-identifiers"));
         formats = new FormatManager();
         int loaded = formats.load(configs.formats(), getLogger());
         renderer = new FormatRenderer(formats, placeholders,

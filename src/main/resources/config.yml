@@ -14,6 +14,16 @@ chat:
   # When false, dkChat leaves public chat alone (vanilla or another plugin formats it).
   enabled: true
 
+placeholders:
+  # Some placeholders return text that contains more placeholders. For example, a LuckPerms
+  # prefix set to "%nexo_dev% &7Dev" makes %luckperms_prefix% return "%nexo_dev% &7Dev".
+  # PlaceholderAPI doesn't expand those, so dkChat does it for the identifiers listed here
+  # (the part before the first underscore, e.g. "nexo" for %nexo_dev%).
+  # Only list plugins you trust: anything listed can be expanded inside other values.
+  # Nexo glyph tags (<glyph:id>) are left in the text for Nexo to render.
+  nested-identifiers:
+    - nexo
+
 name-hover:
   # Show a tooltip when hovering over a player's name in chat.
   # The lines are set per format in formats.yml.

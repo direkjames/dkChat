@@ -43,6 +43,8 @@ All text supports `&` codes, HEX (`&#FF00AA`, `<#FF00AA>`) and MiniMessage. Run 
 | `{message}` | The chat message |
 | `%...%` | Any PlaceholderAPI placeholder |
 
+**Nested placeholders and Nexo glyphs:** if a value contains more placeholders (a LuckPerms prefix set to `%nexo_dev% &7Dev`), dkChat expands them for the identifiers listed in `placeholders.nested-identifiers` in `config.yml` (default: `nexo`). Other identifiers are never expanded inside values. `%nexo_glyphid%` returns a `<glyph:glyphid>` tag (or the raw unicode for default-font glyphs); dkChat leaves the tag in the text for Nexo to render.
+
 Each player gets the highest `priority` format they have the `permission` for. OP players have every permission, so they always get the highest one.
 
 ## Commands
